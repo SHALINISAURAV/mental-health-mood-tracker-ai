@@ -4,7 +4,6 @@ from database.db import get_connection
 # =========================================
 # SAVE JOURNAL
 # =========================================
-
 def save_journal(text, emotion, confidence):
     """
     Save journal entry to database
@@ -12,30 +11,33 @@ def save_journal(text, emotion, confidence):
 
     conn = get_connection()
 
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        INSERT INTO journals (
-            text,
-            emotion,
-            confidence
+        cursor.execute(
+            """
+            INSERT INTO journals (
+                text,
+                emotion,
+                confidence
+            )
+            VALUES (?, ?, ?)
+            """,
+            (text, emotion, confidence)
         )
 
-        VALUES (?, ?, ?)
-        """,
-        (text, emotion, confidence)
-    )
+        conn.commit()
 
-    conn.commit()
+    except Exception as e:
+        print(f"[DB ERROR] save_journal failed: {e}")
 
-    conn.close()
+    finally:
+        conn.close()
 
 
 # =========================================
 # FETCH JOURNALS
 # =========================================
-
 def fetch_journals():
     """
     Fetch all journal entries
@@ -43,25 +45,28 @@ def fetch_journals():
 
     conn = get_connection()
 
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        SELECT
-            id,
-            text,
-            emotion,
-            confidence,
-            created_at
+        cursor.execute(
+            """
+            SELECT
+                id,
+                text,
+                emotion,
+                confidence,
+                created_at
+            FROM journals
+            ORDER BY created_at DESC
+            """
+        )
 
-        FROM journals
+        rows = cursor.fetchall()
+        return rows
 
-        ORDER BY created_at DESC
-        """
-    )
+    except Exception as e:
+        print(f"[DB ERROR] fetch_journals failed: {e}")
+        return []
 
-    rows = cursor.fetchall()
-
-    conn.close()
-
-    return rows
+    finally:
+        conn.close()

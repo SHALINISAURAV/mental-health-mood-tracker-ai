@@ -5,28 +5,39 @@ def render_sidebar():
 
     with st.sidebar:
 
+        # =========================================
+        # BRAND
+        # =========================================
         st.markdown("## 🧠 MoodMind AI")
-
-        st.write("AI-powered emotional wellness platform")
-
-        st.divider()
-
-        st.markdown("## 🚀 Navigation")
-
-        st.write("🏠 Home")
-        st.write("📜 History")
-        st.write("📊 Analytics")
+        st.caption("AI-powered emotional wellness platform")
 
         st.divider()
 
-        st.markdown("## ✨ Features")
+        # =========================================
+        # NAVIGATION
+        # =========================================
+        st.markdown("### 🚀 Navigation")
 
-        st.write("✅ Emotion Detection")
-        st.write("✅ Behavioral Analytics")
-        st.write("✅ AI Recommendations")
-        st.write("✅ Journal Tracking")
-        st.write("✅ Emotional Insights")
+        st.page_link("app.py", label="🏠 Home")
+        st.page_link("pages/History.py", label="📜 History")
+        st.page_link("pages/Analytics.py", label="📊 Analytics")
 
         st.divider()
 
-        st.markdown("💜 Made with Streamlit + AI")
+        # =========================================
+        # FEATURES
+        # =========================================
+        st.markdown("### ✨ Features")
+
+        st.write("🧠 Emotion Detection")
+        st.write("📊 Behavioral Analytics")
+        st.write("🤖 AI Recommendations")
+        st.write("📝 Journal Tracking")
+        st.write("📈 Emotional Insights")
+
+        st.divider()
+
+        # =========================================
+        # FOOTER
+        # =========================================
+        st.markdown("💜 Built with Streamlit + AI")

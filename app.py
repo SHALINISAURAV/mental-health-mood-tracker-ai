@@ -14,63 +14,54 @@ from suggestions.recommendation_engine import generate_recommendations
 from suggestions.emergency_support import detect_emergency
 
 
-# =========================================
-# PAGE CONFIG (MUST BE FIRST STREAMLIT CALL)
-# =========================================
+# ===============================
+# PAGE CONFIG (FIRST LINE RULE)
+# ===============================
 st.set_page_config(
     page_title="MoodMind AI",
     page_icon="🧠",
     layout="wide"
 )
 
-# =========================================
-# INIT DATABASE
-# =========================================
+# ===============================
+# INIT DB (ONLY ONCE)
+# ===============================
 create_tables()
 
-# =========================================
+# ===============================
 # LOAD CSS
-# =========================================
+# ===============================
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-# =========================================
+# ===============================
 # SIDEBAR
-# =========================================
+# ===============================
 render_sidebar()
 
-# =========================================
-# HERO SECTION
-# =========================================
+# ===============================
+# HERO
+# ===============================
 render_hero()
 
 st.write("")
 
-# =========================================
+# ===============================
 # FEATURE CARDS
-# =========================================
+# ===============================
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    feature_card(
-        "😊 Emotion Detection",
-        "Detect emotions using transformer-based NLP models."
-    )
+    feature_card("😊 Emotion Detection", "Detect emotions using AI models.")
 
 with col2:
-    feature_card(
-        "📊 Mood Analytics",
-        "Track emotional trends and behavioral patterns."
-    )
+    feature_card("📊 Mood Analytics", "Track emotional trends over time.")
 
 with col3:
-    feature_card(
-        "🧘 Wellness Insights",
-        "Receive personalized AI wellness suggestions."
-    )
+    feature_card("🧘 Wellness Insights", "Get personalized mental health tips.")
 
-# =========================================
+# ===============================
 # JOURNAL INPUT
-# =========================================
+# ===============================
 st.markdown("## ✍️ Write Today's Journal")
 
 journal_text = st.text_area(
@@ -79,16 +70,16 @@ journal_text = st.text_area(
     placeholder="Write your thoughts here..."
 )
 
-# =========================================
+# ===============================
 # ANALYZE BUTTON
-# =========================================
+# ===============================
 if st.button("Analyze Emotion"):
 
-    if journal_text.strip() == "":
+    if not journal_text.strip():
         st.warning("Please write something first.")
         st.stop()
 
-    # Emergency check
+    # emergency check
     if detect_emergency(journal_text):
         st.error("⚠️ Emotional distress detected")
         st.info("Please reach out to someone you trust ❤️")
@@ -96,7 +87,6 @@ if st.button("Analyze Emotion"):
 
     with st.spinner("Analyzing emotions..."):
 
-        # AI prediction
         predictions = predict_emotion(journal_text)
 
         predictions = sorted(
@@ -107,20 +97,20 @@ if st.button("Analyze Emotion"):
 
         top_emotion = predictions[0]
 
-        # Save to DB
+        # SAVE TO DB
         save_journal(
             text=journal_text,
             emotion=top_emotion["label"],
             confidence=top_emotion["score"]
         )
 
-        # Dashboard
+        # DASHBOARD
         render_dashboard_metrics(
             total_entries=1,
             top_emotion=top_emotion["label"]
         )
 
-        # Recommendations
+        # RECOMMENDATIONS
         recommendations = generate_recommendations(top_emotion["label"])
 
         if not recommendations:
@@ -129,28 +119,23 @@ if st.button("Analyze Emotion"):
                 "wellness_tip": "Take care of yourself 💜"
             }
 
-        # Result UI
-        st.markdown(
-            f"""
-            <div class="emotion-box">
-                <h2>🎯 Detected Emotion: {top_emotion['label'].capitalize()}</h2>
-                <p>Confidence Score: {top_emotion['score']:.2f}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        # RESULT UI
+        st.markdown(f"""
+        <div class="emotion-box">
+            <h2>🎯 {top_emotion['label'].capitalize()}</h2>
+            <p>Confidence: {top_emotion['score']:.2f}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.subheader("📈 Emotion Confidence Scores")
+        st.subheader("📈 Emotion Scores")
 
-        for emotion in predictions:
-            st.write(f"### {emotion['label'].capitalize()}")
-            st.progress(float(emotion["score"]))
-            st.write(f"Confidence: {emotion['score']:.2f}")
+        for e in predictions:
+            st.progress(float(e["score"]))
+            st.write(f"{e['label'].capitalize()} → {e['score']:.2f}")
 
-        # Recommendations UI
-        st.subheader("🤖 Personalized Wellness Suggestions")
+        st.subheader("🤖 Recommendations")
 
-        for strategy in recommendations["strategies"]:
-            st.success(strategy)
+        for s in recommendations["strategies"]:
+            st.success(s)
 
-        st.info(f"🌿 Wellness Tip: {recommendations['wellness_tip']}")
+        st.info(recommendations["wellness_tip"])

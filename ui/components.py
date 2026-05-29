@@ -1,44 +1,25 @@
 import streamlit as st
 
 # =========================================
-# HERO SECTION
+# HERO SECTION (CLEAN STREAMLIT)
 # =========================================
-
 def render_hero():
 
-    st.markdown(
-        """
-        <div>
+    st.markdown("## 🧠 MoodMind AI")
 
-            <p class="hero-title">
-                🧠 MoodMind AI
-            </p>
-
-            <p class="hero-subtitle">
-                Emotion-aware journaling and
-                behavioral analytics system
-            </p>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.caption(
+        "Emotion-aware journaling and behavioral analytics system"
     )
 
-# =========================================
-# FEATURE CARD
-# =========================================
 
+# =========================================
+# FEATURE CARD (CLEAN UI - NO HTML ISSUES)
+# =========================================
 def feature_card(title, description):
 
-    st.markdown(
-        f"""
-        <div class="glass-card">
+    with st.container():
 
-            <h3>{title}</h3>
+        st.markdown(f"### {title}")
+        st.write(description)
 
-            <p>{description}</p>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.divider()
