@@ -1,10 +1,14 @@
-import os
 import sqlite3
+import os
+from database.db import get_connection
 
-DB_PATH = os.path.join(os.getcwd(), "moods.db")
+
+# ===============================
+# CREATE TABLES
+# ===============================
 
 def create_tables():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
